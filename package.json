@@ -1,0 +1,7 @@
+{
+  "name": "cryptoguard-guz-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CryptoGuard.GUZ search homepage preview",
+  "scripts": { "start": "node server.js" }
+}

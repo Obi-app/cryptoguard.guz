@@ -2,7 +2,7 @@ name: Publish CryptoGuard homepage
 on:
   push:
     branches:
-      - codex/cryptoguard-homepage
+      - main
   workflow_dispatch:
 permissions:
   contents: read

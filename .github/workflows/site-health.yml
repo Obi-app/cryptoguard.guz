@@ -1,0 +1,37 @@
+name: CryptoGuard site health
+on:
+  schedule:
+    - cron: "17 8 * * 1"
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Publish CryptoGuard homepage
+    types:
+      - completed
+    branches:
+      - main
+permissions: {}
+jobs:
+  check-site:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check the public homepage, security policy, and stylesheet over HTTPS
+        shell: bash
+        run: |
+          set -euo pipefail
+          site="https://obi-app.github.io/cryptoguard.guz"
+          html="$(mktemp)"
+          headers="$(mktemp)"
+          css="$(mktemp)"
+          trap 'rm -f "$html" "$headers" "$css"' EXIT
+          page_result="$(curl --proto '=https' --proto-redir '=https' --fail --silent --show-error --location --max-redirs 3 --dump-header "$headers" --output "$html" --write-out '%{http_code} %{url_effective}' "$site/")"
+          [[ "$page_result" == "200 $site/" ]]
+          grep -Fq 'CryptoGuard.GUZ' "$html"
+          grep -Fq 'Content-Security-Policy' "$html"
+          grep -Eiq '^strict-transport-security:' "$headers"
+          css_result="$(curl --proto '=https' --proto-redir '=https' --fail --silent --show-error --location --max-redirs 3 --output "$css" --write-out '%{http_code} %{content_type}' "$site/styles.css")"
+          [[ "$css_result" == 200\ text/css* ]]
+          test -s "$css"
+          printf 'Homepage and stylesheet are available over HTTPS with the expected security controls.\n'

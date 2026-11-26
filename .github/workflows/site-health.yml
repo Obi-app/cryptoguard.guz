@@ -30,8 +30,13 @@ jobs:
           [[ "$page_result" == "200 $site/" ]]
           grep -Fq 'CryptoGuard.GUZ' "$html"
           grep -Fq 'Content-Security-Policy' "$html"
+          grep -Fq 'form-action https://www.google.com' "$html"
+          grep -Fq 'og:image' "$html"
+          grep -Fq 'rel="canonical"' "$html"
           grep -Eiq '^strict-transport-security:' "$headers"
+          icon_code="$(curl --proto '=https' --proto-redir '=https' --fail --silent --show-error --location --max-redirs 3 --output /dev/null --write-out '%{http_code}' "$site/favicon.svg")"
+          [[ "$icon_code" == 200 ]]
           css_result="$(curl --proto '=https' --proto-redir '=https' --fail --silent --show-error --location --max-redirs 3 --output "$css" --write-out '%{http_code} %{content_type}' "$site/styles.css")"
           [[ "$css_result" == 200\ text/css* ]]
           test -s "$css"
-          printf 'Homepage and stylesheet are available over HTTPS with the expected security controls.\n'
+          printf 'Homepage, favicon, and stylesheet are available over HTTPS with the expected security controls.\n'

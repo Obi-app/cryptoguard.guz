@@ -5,14 +5,18 @@ const path = require('node:path');
 const files = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
-  ['/styles.css', ['styles.css', 'text/css; charset=utf-8']]
+  ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
+  ['/favicon.svg', ['favicon.svg', 'image/svg+xml']],
+  ['/favicon.ico', ['favicon.ico', 'image/x-icon']],
+  ['/apple-touch-icon.png', ['apple-touch-icon.png', 'image/png']],
+  ['/og.png', ['og.png', 'image/png']]
 ]);
 const headers = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Referrer-Policy': 'no-referrer',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  'Content-Security-Policy': "default-src 'self'; style-src 'self'; form-action https://www.google.com; base-uri 'none'; object-src 'none'; frame-ancestors 'none'",
+  'Content-Security-Policy': "default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; form-action https://www.google.com; base-uri 'none'; object-src 'none'; frame-ancestors 'none'",
   'Strict-Transport-Security': 'max-age=31536000'
 };
 const server = http.createServer((req, res) => {
